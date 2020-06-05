@@ -40,7 +40,7 @@ module.exports.updateClass = (req, res) => {
 
 //get classes
 module.exports.getClasses = (req, res) => {
-    Classes.find({})
+    Classes.find({session : req.params.session})
     .then((classes) => {
         res.json({
             message : "list of classes fetches successfully",
@@ -59,7 +59,8 @@ module.exports.getClasses = (req, res) => {
 //get class teacher name by class
 module.exports.getClassTeacherByClass = (req, res) =>{
     const className = req.params.className
-    Classes.findOne({className : className})
+    const session = req.params.session
+    Classes.findOne({className : className, session})
     .then((cls) => {
         res.json({
             message : "Class teacher fetches successfully",
@@ -78,7 +79,8 @@ module.exports.getClassTeacherByClass = (req, res) =>{
 //get class fees by class name
 module.exports.getClassMonthlyFeesByClass = (req, res) =>{
     const className = req.params.className
-    Classes.findOne({className : className})
+    const session = req.params.session
+    Classes.findOne({className : className, session})
     .then((cls) => {
         res.json({
             message : "Class monthly fees fetches successfully",
@@ -97,7 +99,8 @@ module.exports.getClassMonthlyFeesByClass = (req, res) =>{
 //get exam fee by class name
 module.exports.getClassExamFeesByClass = (req, res) =>{
     const className = req.params.className
-    Classes.findOne({className : className})
+    const session = req.params.session
+    Classes.findOne({className : className, session})
     .then((cls) => {
         res.json({
             message : "Class exam fees fetches successfully",
@@ -116,7 +119,8 @@ module.exports.getClassExamFeesByClass = (req, res) =>{
 //get class and exam fee by class name
 module.exports.getClassfeesByClass = (req, res) =>{
     const className = req.params.className
-    Classes.findOne({className : className})
+    const session = req.params.session
+    Classes.findOne({className : className, session})
     .then((cls) => {
         res.json({
             message : "Class exam fees fetches successfully",

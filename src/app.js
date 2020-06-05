@@ -9,6 +9,15 @@ const studentRoute = require('./routes/student.route')
 const classRoute = require('./routes/class.route')
 
 mongoose.connect(config.DB_PATH, { useUnifiedTopology: true })
+mongoose.connection.on('connected', function() {
+	console.log('Mongoose connected to mLab');
+});
+mongoose.connection.on('error', function(err) {
+	console.log('Mongoose connection error '+err);
+});
+mongoose.connection.on('disconnected', function() {
+	console.log('Mongoose disconnected');
+});
 
 const app = express();
 
@@ -22,16 +31,16 @@ app.post('/login', loginRoute.authenticate)
 //Student route
 app.post('/student', studentRoute.addStudent)
 app.post('/student-fee', studentRoute.addStudentFee)
-app.get('/student-fee/:studentId', studentRoute.getFeesByStudentId)
-app.get('/student/:class', studentRoute.getStudentsByClass)
+app.get('/student-fee/:studentId/:session', studentRoute.getFeesByStudentId)
+app.get('/student/:class/:session', studentRoute.getStudentsByClass)
 app.post('/update-student', studentRoute.updateStudentDetailes)
 
-app.get('/classes', classRoute.getClasses)
+app.get('/classes/:session', classRoute.getClasses)
 app.post('/classes', classRoute.addClasses)
-app.get('/classes/:className', classRoute.getClassTeacherByClass)
-app.get('/classes-fees/:className', classRoute.getClassMonthlyFeesByClass)
+app.get('/classes/:className/:session', classRoute.getClassTeacherByClass)
+app.get('/classes-fees/:className/:session', classRoute.getClassMonthlyFeesByClass)
 app.get('/classes-exam-fees/:className', classRoute.getClassExamFeesByClass)
-app.get('/classes-class-exam-fees/:className', classRoute.getClassfeesByClass)
+app.get('/classes-class-exam-fees/:className/:session', classRoute.getClassfeesByClass)
 app.post('/update-class', classRoute.updateClass)
 
 app.listen(config.PORT, () => {

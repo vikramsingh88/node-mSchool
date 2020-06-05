@@ -9,6 +9,7 @@ const studentSchema = new Schema({
     address : {type :String,required : true},
     studentClass : {type :String,required : true},
     classTeacher : {type :String,required : true},
+    session : { type :String, required : true },
     date: {type: Date, default: Date.now}
 })
 

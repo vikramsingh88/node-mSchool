@@ -61,6 +61,7 @@ module.exports.addStudentFee = (req, res) => {
 //get all student by class
 module.exports.getStudentsByClass = (req, res) => {
     const className = req.params.class
+    const session = req.params.session
     Student.find({studentClass : className})
     .then((students) => {
         res.json({
@@ -80,7 +81,8 @@ module.exports.getStudentsByClass = (req, res) => {
 //get student fee
 module.exports.getFeesByStudentId = (req, res) => {
     const studentId = req.params.studentId
-    Fee.find({studentId})
+    const session = req.params.session
+    Fee.find({studentId, session})
     .then((fees) => {
         res.json({
             message : "list of students fetches successfully",

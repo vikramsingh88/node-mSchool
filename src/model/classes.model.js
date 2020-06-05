@@ -7,6 +7,7 @@ const classesSchema = new Schema({
     className : { type :String, required : true },
     classFees : { type :String, required : true },
     classExamFees : { type :String, required : true },
+    session : { type :String, required : true },
     date: { type: Date, default: Date.now }
 })
 

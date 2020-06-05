@@ -9,6 +9,7 @@ const feeSchema = new Schema({
     month : { type: String, required: true },
     remainingFee : { type: String, required: true },
     advanceFee : { type: String, required: true },
+    session : { type :String, required : true },
     date: { type: Date, default: Date.now  }
 })
   
