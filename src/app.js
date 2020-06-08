@@ -34,6 +34,7 @@ app.post('/student-fee', studentRoute.addStudentFee)
 app.get('/student-fee/:studentId/:session', studentRoute.getFeesByStudentId)
 app.get('/student/:class/:session', studentRoute.getStudentsByClass)
 app.post('/update-student', studentRoute.updateStudentDetailes)
+app.post('/student-fee-update', studentRoute.updateStudentFee)
 
 app.get('/classes/:session', classRoute.getClasses)
 app.post('/classes', classRoute.addClasses)

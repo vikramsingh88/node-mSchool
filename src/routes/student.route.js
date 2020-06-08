@@ -4,12 +4,32 @@ const Fee = require('../model/fees.model')
 //create student
 module.exports.addStudent = (req, res) => {
     console.log('Sudent : '+req.body)
-    const newStudent = new Student(req.body)
-    newStudent.save().then((student) => {
+    const newStudent = new Student({
+        studentName : req.body.studentName,
+        fatherName : req.body.fatherName,
+        address : req.body.address,
+        studentClass : req.body.studentClass,
+        classTeacher : req.body.classTeacher,
+        session : req.body.session
+    })
+    newStudent.image.data = req.body.image
+    newStudent.image.contentType = 'image/png'
+    newStudent.save().then((addedStudent) => {
+        let buff = addedStudent.image.data
+        let imageBase64 = buff.toString('base64')
         res.json({
             message : 'Student addess successfully',
             isSuccess : true,
-            student
+            student : {
+                studentName : addedStudent.studentName,
+                image : imageBase64,
+                fatherName : addedStudent.fatherName,
+                address : addedStudent.address,
+                studentClass : addedStudent.studentClass,
+                classTeacher : addedStudent.classTeacher,
+                session : addedStudent.session,
+                date: addedStudent.date
+            }
         })
     }).catch((error) => {
         console.log(error)
@@ -40,6 +60,25 @@ module.exports.updateStudentDetailes = (req, res) => {
 }
 
 //update student fees
+module.exports.updateStudentFee = (req, res) => {
+    console.log("updating student fees "+req.body._id)
+    Fee.findOneAndUpdate({_id:req.body._id}, req.body)
+    .then((updatedfee) => {
+        res.json({
+            message : 'Student fee updated successdully',
+            isSuccess : true,
+            fee : updatedfee
+        });
+    }).catch((error) => {
+        console.log(error)
+        res.json({
+            message : 'Error in updating student fee',
+            isSuccess : false,
+        })
+    })
+}
+
+//add student fees
 module.exports.addStudentFee = (req, res) => {
     console.log("adding student fees")
     const newFee = new Fee(req.body)
@@ -62,12 +101,34 @@ module.exports.addStudentFee = (req, res) => {
 module.exports.getStudentsByClass = (req, res) => {
     const className = req.params.class
     const session = req.params.session
-    Student.find({studentClass : className})
+    Student.find({studentClass : className, session})
     .then((students) => {
+        //alter each student for image data
+        let stdArr = []
+        students.forEach((std) => {
+            let buff = std.image.data
+            let imageBase64
+            if(buff === undefined) {
+
+            } else {
+                imageBase64 = buff.toString('binary')
+            }
+            let student = {
+                studentName : std.studentName,
+                image : imageBase64,
+                fatherName : std.fatherName,
+                address : std.address,
+                studentClass : std.studentClass,
+                classTeacher : std.classTeacher,
+                session : std.session,
+                date: std.date
+            }
+            stdArr.push(student)
+        })
         res.json({
             message : "list of students fetches successfully",
             isSuccess : true,
-            students
+            students : stdArr
         })
     }).catch((error) => {
         console.log(error)
