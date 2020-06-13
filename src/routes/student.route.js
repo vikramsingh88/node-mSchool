@@ -58,7 +58,8 @@ module.exports.updateStudentDetailes = (req, res) => {
 			classTeacher : req.body.classTeacher,
 			session : req.body.session,
 			mobile : req.body.mobile,
-			transport : req.body.transport
+            transport : req.body.transport,
+            date : new Date(req.body.date)
     })
     newStudent.image.data = req.body.image
     newStudent.image.contentType = 'image/png'
