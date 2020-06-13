@@ -4,5 +4,6 @@ const DB_PATH = 'mongodb://mschool:Mind123@ds031902.mlab.com:31902/mschool';
 
 module.exports = {
     PORT,
-    DB_PATH
+    DB_PATH,
+    'secret' : 'IlovemyIndia'
 }

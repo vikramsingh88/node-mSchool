@@ -1,5 +1,6 @@
 const Student = require('../model/student.model')
 const Fee = require('../model/fees.model')
+const messageRoute = require('./message.route')
 
 //create student
 module.exports.addStudent = (req, res) => {
@@ -10,7 +11,9 @@ module.exports.addStudent = (req, res) => {
         address : req.body.address,
         studentClass : req.body.studentClass,
         classTeacher : req.body.classTeacher,
-        session : req.body.session
+        session : req.body.session,
+		mobile : req.body.mobile,
+		transport : req.body.transport
     })
     newStudent.image.data = req.body.image
     newStudent.image.contentType = 'image/png'
@@ -21,6 +24,7 @@ module.exports.addStudent = (req, res) => {
             message : 'Student addess successfully',
             isSuccess : true,
             student : {
+				_id : addedStudent._id,
                 studentName : addedStudent.studentName,
                 image : imageBase64,
                 fatherName : addedStudent.fatherName,
@@ -28,7 +32,9 @@ module.exports.addStudent = (req, res) => {
                 studentClass : addedStudent.studentClass,
                 classTeacher : addedStudent.classTeacher,
                 session : addedStudent.session,
-                date: addedStudent.date
+                date: addedStudent.date,
+				mobile : addedStudent.mobile,
+				transport : addedStudent.transport
             }
         })
     }).catch((error) => {
@@ -43,12 +49,39 @@ module.exports.addStudent = (req, res) => {
 //update student
 module.exports.updateStudentDetailes = (req, res) => {
     console.log('updating student by id '+req.body._id)
-    Student.findOneAndUpdate({_id:req.body._id}, req.body)
+	    const newStudent = new Student({
+			_id : req.body._id,
+			studentName : req.body.studentName,
+			fatherName : req.body.fatherName,
+			address : req.body.address,
+			studentClass : req.body.studentClass,
+			classTeacher : req.body.classTeacher,
+			session : req.body.session,
+			mobile : req.body.mobile,
+			transport : req.body.transport
+    })
+    newStudent.image.data = req.body.image
+    newStudent.image.contentType = 'image/png'
+    Student.findOneAndUpdate({_id:req.body._id}, newStudent)
     .then((updatedStudent) => {
+		let buff = updatedStudent.image.data
+        let imageBase64 = buff.toString('binary')
         res.json({
             message : 'student updated successdully',
             isSuccess : true,
-            student : updatedStudent
+            student : {
+				_id : updatedStudent._id,
+                studentName : updatedStudent.studentName,
+                image : imageBase64,
+                fatherName : updatedStudent.fatherName,
+                address : updatedStudent.address,
+                studentClass : updatedStudent.studentClass,
+                classTeacher : updatedStudent.classTeacher,
+                session : updatedStudent.session,
+                date: updatedStudent.date,
+				mobile : updatedStudent.mobile,
+				transport : updatedStudent.transport
+            }
         });
     }).catch((error) => {
         console.log(error)
@@ -62,8 +95,10 @@ module.exports.updateStudentDetailes = (req, res) => {
 //update student fees
 module.exports.updateStudentFee = (req, res) => {
     console.log("updating student fees "+req.body._id)
+	console.log('updated fees advance - '+req.body.advanceFee)
     Fee.findOneAndUpdate({_id:req.body._id}, req.body)
     .then((updatedfee) => {
+		console.log('updated fees advance - '+updatedfee)
         res.json({
             message : 'Student fee updated successdully',
             isSuccess : true,
@@ -80,7 +115,7 @@ module.exports.updateStudentFee = (req, res) => {
 
 //add student fees
 module.exports.addStudentFee = (req, res) => {
-    console.log("adding student fees")
+    console.log("adding student fees "+req.body.mobile)
     const newFee = new Fee(req.body)
     newFee.save().then((fee) => {
         res.json({
@@ -88,6 +123,13 @@ module.exports.addStudentFee = (req, res) => {
             isSuccess : true,
             fee
         });
+		//send fee submited message
+		if(req.body.mobile === undefined) {
+			console.log('message can not sent because no mobile available')
+		} else {
+			let messageBody = `${req.body.name} ${fee.feeType} fees for the month of ${req.body.month} Rs ${req.body.amount} is submitted successfully.\nSMT Rooprani Vidya Mandir Lilambarpur Fatehpur`
+			messageRoute.sendBulkMessages(messageBody, req.body.mobile)
+		}
     }).catch((error) => {
         console.log(error)
         res.json({
@@ -114,6 +156,7 @@ module.exports.getStudentsByClass = (req, res) => {
                 imageBase64 = buff.toString('binary')
             }
             let student = {
+				_id : std._id,
                 studentName : std.studentName,
                 image : imageBase64,
                 fatherName : std.fatherName,
@@ -121,7 +164,9 @@ module.exports.getStudentsByClass = (req, res) => {
                 studentClass : std.studentClass,
                 classTeacher : std.classTeacher,
                 session : std.session,
-                date: std.date
+                date: std.date,
+				mobile : std.mobile,
+				transport : std.transport,
             }
             stdArr.push(student)
         })
