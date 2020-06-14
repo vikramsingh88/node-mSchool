@@ -11,7 +11,8 @@ const studentSchema = new Schema({
     classTeacher : {type :String,required : true},
     session : { type :String, required : true },
     mobile : { type :String, required : true },
-	transport : { type :Boolean, required : true },
+    transport : { type :Boolean, required : true },
+    createdBy : { type :String, required : true },
     date: {type: Date, default: Date.now}
 })
 

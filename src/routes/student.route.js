@@ -13,7 +13,8 @@ module.exports.addStudent = (req, res) => {
         classTeacher : req.body.classTeacher,
         session : req.body.session,
 		mobile : req.body.mobile,
-		transport : req.body.transport
+        transport : req.body.transport,
+        createdBy : req.body.createdBy
     })
     newStudent.image.data = req.body.image
     newStudent.image.contentType = 'image/png'
@@ -34,7 +35,8 @@ module.exports.addStudent = (req, res) => {
                 session : addedStudent.session,
                 date: addedStudent.date,
 				mobile : addedStudent.mobile,
-				transport : addedStudent.transport
+                transport : addedStudent.transport,
+                createdBy : addedStudent.createdBy
             }
         })
     }).catch((error) => {
@@ -59,7 +61,7 @@ module.exports.updateStudentDetailes = (req, res) => {
 			session : req.body.session,
 			mobile : req.body.mobile,
             transport : req.body.transport,
-            date : new Date(req.body.date)
+            date : new Date(req.body.date),
     })
     newStudent.image.data = req.body.image
     newStudent.image.contentType = 'image/png'
@@ -81,7 +83,9 @@ module.exports.updateStudentDetailes = (req, res) => {
                 session : updatedStudent.session,
                 date: updatedStudent.date,
 				mobile : updatedStudent.mobile,
-				transport : updatedStudent.transport
+                transport : updatedStudent.transport,
+                createdBy : updatedStudent.createdBy
+                
             }
         });
     }).catch((error) => {
@@ -167,7 +171,8 @@ module.exports.getStudentsByClass = (req, res) => {
                 session : std.session,
                 date: std.date,
 				mobile : std.mobile,
-				transport : std.transport,
+                transport : std.transport,
+                createdBy : std.createdBy
             }
             stdArr.push(student)
         })
