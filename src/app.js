@@ -57,7 +57,9 @@ app.get('/classes-class-exam-fees/:className/:session', passport.authenticate('j
 app.post('/update-class', passport.authenticate('jwt', {'session' : false}), classRoute.updateClass)
 
 //send messages
-app.post('/send-message', messageRounte.sendMessage)
+app.post('/send-message', passport.authenticate('jwt', {'session' : false}), messageRounte.sendMessage)
+//get all messages of current session
+app.get('/get-messages/:session', passport.authenticate('jwt', {'session' : false}), messageRounte.getAllMessagesBySession)
 //callback
 app.post('/message-sent', (req, res) => {
 	console.log('message sent call back')

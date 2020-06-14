@@ -1,6 +1,7 @@
 const twilo = require('twilio')
 
 const Student = require('../model/student.model')
+const Message = require('../model/message.model')
 
 const ACCOUNT_SID = 'AC36be5ebfdfd5e3cd514572b5e000b23c'
 const AUTH_TOKEN = 'ee94a5084bff042503f0e93f827cdd76'
@@ -13,89 +14,101 @@ module.exports.sendMessage = (req, res) => {
 	const message = req.body.message
     const studentClass = req.body.stdClass
 	const session = req.body.session
-	if('All' === studentClass) {
-		getStudentsBySession(session, (error, mobiles) => {
-			if(error === undefined) {
-				var contacts = []; 
-				for(i = 0; i < mobiles.length; i++) { 
-					if(undefined !==mobiles[i]) {
-						contacts.push(JSON.stringify(
-							{
-								binding_type: 'sms', 
-								address: mobiles[i]
-							}
-						))
+
+	//save message to db then send message
+	console.log("adding a new message")
+    const newMessage = new Message(req.body)
+    newMessage.save().then((msg) => {
+		if('All' === studentClass) {
+			getStudentsBySession(session, (error, mobiles) => {
+				if(error === undefined) {
+					var contacts = []; 
+					for(i = 0; i < mobiles.length; i++) { 
+						if(undefined !==mobiles[i]) {
+							contacts.push(JSON.stringify(
+								{
+									binding_type: 'sms', 
+									address: mobiles[i]
+								}
+							))
+						}
+					} 
+					console.log(JSON.stringify(contacts))
+					const notificationOpts = { 
+						toBinding: contacts, 
+						body: message, 
 					}
-				} 
-				console.log(JSON.stringify(contacts))
-				const notificationOpts = { 
-					toBinding: contacts, 
-					body: message, 
-				}
-				client.notify.services(SERVICE_SID).notifications.create(notificationOpts) 
-				.then((notification) => {
-					console.log('Message sent', JSON.stringify(notification))
-					res.json({
-						message : 'Message sent successfully',
-						isSuccess : true
+					client.notify.services(SERVICE_SID).notifications.create(notificationOpts) 
+					.then((notification) => {
+						console.log('Message sent', JSON.stringify(notification))
+						res.json({
+							message : 'Message sent successfully',
+							isSuccess : true
+						})
+					}).catch((error) => {
+						console.log(error)
+						res.json({
+							message : 'Message sent failed',
+							isSuccess : false
+						})
 					})
-				}).catch((error) => {
-					console.log(error)
+				} else {
+					console.log('error in getting contacts list so cannot send broadcast')
 					res.json({
 						message : 'Message sent failed',
 						isSuccess : false
 					})
-				})
-			} else {
-				console.log('error in getting contacts list so cannot send broadcast')
-				res.json({
-					message : 'Message sent failed',
-					isSuccess : false
-				})
-			}
-		})
-	} else {
-		getStudentsByClass(studentClass, session, (error, mobiles) => {
-			if(error === undefined) {
-				var contacts = []; 
-				for(i = 0; i < mobiles.length; i++) { 
-					if(undefined !==mobiles[i]) {
-						contacts.push(JSON.stringify(
-							{
-								binding_type: 'sms', 
-								address: mobiles[i]
-							}
-						))
-					}
-				} 
-				console.log(JSON.stringify(contacts))
-				const notificationOpts = { 
-					toBinding: contacts, 
-					body: message, 
 				}
-				client.notify.services(SERVICE_SID).notifications.create(notificationOpts) 
-				.then((notification) => {
-					console.log('Message sent', JSON.stringify(notification))
-					res.json({
-						message : 'Message sent successfully',
-						isSuccess : true
+			})
+		} else {
+			getStudentsByClass(studentClass, session, (error, mobiles) => {
+				if(error === undefined) {
+					var contacts = []; 
+					for(i = 0; i < mobiles.length; i++) { 
+						if(undefined !==mobiles[i]) {
+							contacts.push(JSON.stringify(
+								{
+									binding_type: 'sms', 
+									address: mobiles[i]
+								}
+							))
+						}
+					} 
+					console.log(JSON.stringify(contacts))
+					const notificationOpts = { 
+						toBinding: contacts, 
+						body: message, 
+					}
+					client.notify.services(SERVICE_SID).notifications.create(notificationOpts) 
+					.then((notification) => {
+						console.log('Message sent', JSON.stringify(notification))
+						res.json({
+							message : 'Message sent successfully',
+							isSuccess : true
+						})
+					}).catch((error) => {
+						console.log(error)
+						res.json({
+							message : 'Message sent failed',
+							isSuccess : false
+						})
 					})
-				}).catch((error) => {
-					console.log(error)
+				} else {
+					console.log('error in getting contacts list so cannot send broadcast')
 					res.json({
 						message : 'Message sent failed',
 						isSuccess : false
 					})
-				})
-			} else {
-				console.log('error in getting contacts list so cannot send broadcast')
-				res.json({
-					message : 'Message sent failed',
-					isSuccess : false
-				})
-			}
-		})
-	} 
+				}
+			})
+		}
+    }).catch((error) => {
+        console.log(error)
+        res.json({
+            message : 'Error in adding new message',
+            isSuccess : false,
+        })
+    }) 
 }
 
 const getStudentsByClass = (className, session, callback) => {
@@ -134,4 +147,23 @@ module.exports.sendBulkMessages = (messageBody, mobile) => {
 	}).then(message => console.log(message.sid)).catch((error) => {
 		console.log(error)
 	})
+}
+
+//All messages of current session
+module.exports.getAllMessagesBySession = (req, res) => {
+	const session = req.params.session
+	Message.find({session})
+    .then((msgs) => {
+		res.json({
+			message : 'All messages fetched successfully',
+			msgs,
+            isSuccess : true,
+        })
+	}).catch((error) => {
+		console.log(error)
+		res.json({
+            message : 'Error in adding new message',
+            isSuccess : false,
+        })
+    })
 }
