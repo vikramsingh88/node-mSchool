@@ -4,7 +4,7 @@ const Student = require('../model/student.model')
 const Message = require('../model/message.model')
 
 const ACCOUNT_SID = process.env.ACCOUNT_SID // read from sys property
-const AUTH_TOKEN = process.env.ACCOUNT_SID // read from sys property
+const AUTH_TOKEN = process.env.AUTH_TOKEN // read from sys property
 const SERVICE_SID = process.env.SERVICE_SID // read from sys property
 const client = twilo(ACCOUNT_SID, AUTH_TOKEN)
 
