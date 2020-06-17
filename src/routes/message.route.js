@@ -3,9 +3,9 @@ const twilo = require('twilio')
 const Student = require('../model/student.model')
 const Message = require('../model/message.model')
 
-const ACCOUNT_SID = 'AC36be5ebfdfd5e3cd514572b5e000b23c'
-const AUTH_TOKEN = 'ee94a5084bff042503f0e93f827cdd76'
-const SERVICE_SID = 'IS365fe3a1e209c0444ad0829010691ca4'
+const ACCOUNT_SID = process.env.ACCOUNT_SID // read from sys property
+const AUTH_TOKEN = process.env.ACCOUNT_SID // read from sys property
+const SERVICE_SID = process.env.SERVICE_SID // read from sys property
 const client = twilo(ACCOUNT_SID, AUTH_TOKEN)
 
 module.exports.sendMessage = (req, res) => {
