@@ -58,6 +58,8 @@ app.post('/update-class', passport.authenticate('jwt', {'session' : false}), cla
 
 //send messages
 app.post('/send-message', passport.authenticate('jwt', {'session' : false}), messageRounte.sendMessage)
+//send message to a mobile
+app.post('/send-message/:mobile', passport.authenticate('jwt', {'session' : false}), messageRounte.sendMessageToContact)
 //get all messages of current session
 app.get('/get-messages/:session', passport.authenticate('jwt', {'session' : false}), messageRounte.getAllMessagesBySession)
 //callback

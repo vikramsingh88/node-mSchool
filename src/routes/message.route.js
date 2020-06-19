@@ -124,6 +124,37 @@ const getStudentsByClass = (className, session, callback) => {
 		callback(error)
     })
 }
+
+//Send message to a mobile
+module.exports.sendMessageToContact = (req, res) => {
+	const mobile = req.params.mobile
+	const message = req.body.message
+    const studentClass = req.body.stdClass
+	const session = req.body.session
+	const newMessage = new Message(req.body)
+	newMessage.save().then((msg) => {
+		client.messages.create({
+			body: message,
+			from: '+12058394489',
+			to: mobile
+		}).then((message) => {
+			console.log('Message sent successfully')
+				res.json({
+				message : 'Message sent successfully',
+				isSuccess : true
+			})
+		}).catch((error) => {
+			console.log(error)
+		})
+	}).catch((error) => {
+		console.log(error)
+		res.json({
+			message : 'Error in adding new message',
+			isSuccess : false,
+		})
+	})
+}
+
 //All students of current session
 const getStudentsBySession = (session, callback) => {
 	Student.find({session})
@@ -144,7 +175,7 @@ module.exports.sendBulkMessages = (messageBody, mobile) => {
 		body: messageBody,
 		from: '+12058394489',
 		to: mobile
-	}).then(message => console.log(message.sid)).catch((error) => {
+	}).then(message => console.log('Message sent successfully')).catch((error) => {
 		console.log(error)
 	})
 }

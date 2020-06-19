@@ -132,7 +132,7 @@ module.exports.addStudentFee = (req, res) => {
 		if(req.body.mobile === undefined) {
 			console.log('message can not sent because no mobile available')
 		} else {
-			let messageBody = `${req.body.name} ${fee.feeType} fees for the month of ${req.body.month} Rs ${req.body.amount} is submitted successfully.\nSMT Rooprani Vidya Mandir Lilambarpur Fatehpur`
+			let messageBody = `${req.body.name} ${fee.feeType} fees Rs ${req.body.amount} for the month of ${req.body.month} is submitted successfully.\nSMT Rooprani Vidya Mandir Lilambarpur Fatehpur`
 			messageRoute.sendBulkMessages(messageBody, req.body.mobile)
 		}
     }).catch((error) => {
